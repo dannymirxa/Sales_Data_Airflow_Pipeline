@@ -3,16 +3,10 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.operators.email import EmailOperator
 import sys
-import os
 
-# Add the operations directory to Python path
-# dag_folder = os.path.dirname(os.path.abspath(__file__))
-# operations_folder = os.path.join(os.path.dirname(dag_folder), 'operation')
-# sys.path.append(operations_folder)
-
-import sys
 sys.path.append('/opt/airflow/operation')
 
+#import module from operation folder
 from read_mysql_product_category import main
 from upload_file_to_drive_product_category import upload_excel
 
@@ -28,6 +22,7 @@ default_args = {
     'retry_delay': timedelta(minutes=5),
 }
 
+# Set the DAG scheduler
 dag = DAG(
     'mysql_product_category_report',
     default_args=default_args,
@@ -37,7 +32,10 @@ dag = DAG(
     catchup=False,
     tags=['mysql', 'report'],
 )
-# Define the task
+
+# Define the tasks
+
+## Create the Excel file
 generate_report = PythonOperator(
     task_id='generate_product_category_report',
     python_callable=main,
@@ -47,12 +45,14 @@ generate_report = PythonOperator(
 def upload_file_wrapper():
     return upload_excel('/opt/airflow/file_output/product_category.xlsx')
 
+## Upload the Excel file to Google Drive
 upload_file = PythonOperator(
     task_id='upload_product_category_report_to_drive',
     python_callable=upload_file_wrapper,
     dag=dag,
 )
 
+# Sends email to recipients if upload_file task is successful
 send_success_email = EmailOperator(
     task_id='send_success_email',
     to=['danialmirxa96@gmail.com', 'william.cheah@mrdiy.com' , 'andrew.pung@mrdiy.com'],
@@ -65,5 +65,5 @@ send_success_email = EmailOperator(
     dag=dag,
 )
 
-# Set task dependencies (in this case, we only have one task)
+# Set task dependencies
 generate_report >> upload_file >> send_success_email

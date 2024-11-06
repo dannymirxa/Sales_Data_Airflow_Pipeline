@@ -3,14 +3,7 @@ from airflow import DAG
 from airflow.operators.python import PythonOperator
 from airflow.operators.email import EmailOperator
 import sys
-import os
 
-# Add the operations directory to Python path
-# dag_folder = os.path.dirname(os.path.abspath(__file__))
-# operations_folder = os.path.join(os.path.dirname(dag_folder), 'operation')
-# sys.path.append(operations_folder)
-
-import sys
 sys.path.append('/opt/airflow/operation')
 
 from read_mysql_store_region import main

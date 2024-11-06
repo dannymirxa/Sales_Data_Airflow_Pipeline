@@ -3,8 +3,8 @@ from google.oauth2 import service_account
 
 SCOPES = ['https://www.googleapis.com/auth/drive']
 # SERVICE_ACCOUNT_FILE = 'diy-assessment-6bd74330e042.json'
-SERVICE_ACCOUNT_FILE = '/opt/airflow/credentials/diy-assessment-6bd74330e042.json'
-PARENT_FOLDER_ID = "1agNDkq3L8f2-Qzs9m5-NC1AN1A1-PJbB"
+SERVICE_ACCOUNT_FILE = '/opt/airflow/credentials/diy-assessment-6bd74330e042.json' # location of Service Account JSON
+PARENT_FOLDER_ID = "1agNDkq3L8f2-Qzs9m5-NC1AN1A1-PJbB" # URL of Google Drive folder
 
 def authenticate():
     creds = service_account.Credentials.from_service_account_file(SERVICE_ACCOUNT_FILE, scopes=SCOPES)
@@ -24,4 +24,4 @@ def upload_excel(file_path):
         media_body=file_path
     ).execute()
 
-# upload_excel("/opt/airflow/file_output/product_category.xlsx")
+upload_excel("/opt/airflow/file_output/product_category.xlsx")
