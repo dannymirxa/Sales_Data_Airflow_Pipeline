@@ -1,6 +1,7 @@
 from datetime import datetime, timedelta
 from airflow import DAG
 from airflow.operators.python import PythonOperator
+from airflow.operators.email import EmailOperator
 import sys
 import os
 
@@ -13,6 +14,7 @@ import sys
 sys.path.append('/opt/airflow/operation')
 
 from read_mysql_store_region import main
+from upload_file_to_drive_store_region import upload_excel
 
 # Import the main function from your script
 # from operation.read_mysql_store_region import main
@@ -20,8 +22,9 @@ from read_mysql_store_region import main
 default_args = {
     'owner': 'airflow',
     'depends_on_past': False,
-    'email_on_failure': False,
-    'email_on_retry': False,
+    'email': ['danialmirxa96@gmail.com'],
+    'email_on_failure': True,
+    'email_on_retry': True,
     'retries': 1,
     'retry_delay': timedelta(minutes=5),
 }
@@ -43,5 +46,26 @@ generate_report = PythonOperator(
     dag=dag,
 )
 
+def upload_file_wrapper():
+    return upload_excel('/opt/airflow/file_output/store_region.xlsx')
+
+upload_file = PythonOperator(
+    task_id='upload_store_region_report_to_drive',
+    python_callable=upload_file_wrapper,
+    dag=dag,
+)
+
+send_success_email = EmailOperator(
+    task_id='send_success_email',
+    to=['danialmirxa96@gmail.com', 'william.cheah@mrdiy.com' , 'andrew.pung@mrdiy.com'],
+    subject='Store Region Report Task Success',
+    html_content="""
+        <h3>Task Completed Successfully</h3>
+        <p>Store Region Report has completed successfully.</p>
+        <p>Execution date: {{ ds }}</p>
+    """,
+    dag=dag,
+)
+
 # Set task dependencies (in this case, we only have one task)
-generate_report
+generate_report >> upload_file >> send_success_email
