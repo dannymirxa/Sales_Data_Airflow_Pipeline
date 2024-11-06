@@ -39,7 +39,7 @@ def main():
         'product_category': create_table('product_category')
     }
     column_widths = {'A': 20, 'B': 15, 'C': 15, 'D': 15, 'E': 15}
-    save_to_excel(dataframes, 'sales_data.xlsx', column_widths)
+    save_to_excel(dataframes, 'file_output/sales_data.xlsx', column_widths)
 
 if __name__ == '__main__':
     main()

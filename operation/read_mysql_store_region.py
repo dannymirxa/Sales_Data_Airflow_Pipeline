@@ -1,9 +1,9 @@
 import pandas as pd
 from sqlalchemy import create_engine
-from openpyxl import load_workbook
+# from openpyxl import load_workbook
 
 def my_sql_engine():
-    return create_engine('mysql+pymysql://myuser:mypassword@localhost:3306/diy')
+    return create_engine('mysql+pymysql://myuser:mypassword@mysql-diy:3306/diy')
 
 def create_table(table: str) -> pd.DataFrame:
     query = f'''
@@ -35,7 +35,8 @@ def main():
         'store_region': create_table('store_region')
     }
     column_widths = {'A': 20, 'B': 15, 'C': 15, 'D': 15, 'E': 15}
-    save_to_excel(dataframes, 'store_region.xlsx', column_widths)
+    # save_to_excel(dataframes, 'file_output/store_region.xlsx', column_widths)
+    save_to_excel(dataframes, '/opt/airflow/file_output/store_region.xlsx', column_widths)
 
 if __name__ == '__main__':
     main()
