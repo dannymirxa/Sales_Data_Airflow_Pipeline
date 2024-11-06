@@ -1,9 +1,11 @@
-FROM apache/airflow:latest
+FROM apache/airflow:2.10.2
+
 USER root
-RUN apt update && \
 
-    apt install git -y && \
+# Install telnet
+RUN apt-get update \
+    && apt-get install -y telnet \
+    && apt-get clean \
+    && rm -rf /var/lib/apt/lists/*
 
-    apt clean
-    
 USER airflow

@@ -3,7 +3,7 @@ from sqlalchemy import create_engine
 from openpyxl import load_workbook
 
 def my_sql_engine():
-    return create_engine('mysql+pymysql://myuser:mypassword@localhost/diy')
+    return create_engine('mysql+pymysql://myuser:mypassword@mysql-diy:3306/diy')
 
 def create_table(table: str) -> pd.DataFrame:
     query = f'''
@@ -35,7 +35,7 @@ def main():
         'product_category': create_table('product_category')
     }
     column_widths = {'A': 20, 'B': 15, 'C': 15, 'D': 15, 'E': 15}
-    save_to_excel(dataframes, 'product_category.xlsx', column_widths)
+    save_to_excel(dataframes, 'file_output/product_category.xlsx', column_widths)
 
 if __name__ == '__main__':
     main()
